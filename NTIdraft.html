@@ -63,21 +63,21 @@ var map = new mapboxgl.Map({
 });
 
 var nav = new mapboxgl.NavigationControl();
-map.addControl(nav, 'top-left');
+map.addControl(nav, 'top-right');
 
 map.on('load', function () {
-            map.addSource('dc', {
+            map.addSource('nti_map', {
                 type: 'geojson',
-                data: 'https://gist.githubusercontent.com/hrecht/82b6440ed3b982a6f594/raw/48832482382f81d1f6943896626e21b80da6b45c/data.geojson'
+                data: 'https://github.com/datablick/NTI/blob/master/MapPlusScore.geojson'
             });
 
             map.addLayer({
-                "id": "tracts",
+                "id": "NAME_LONG",
                 "type": "fill",
-                "source": "dc",
+                "source": "nti_map",
                 "paint": {
                     "fill-color": {
-                        property: 'TOTPOPCHG',
+                        property: 'BioSecurit',
                         stops: [
                     [BREAKS[0], COLORS[0]],
                     [BREAKS[1], COLORS[1]],
@@ -94,12 +94,13 @@ map.on('load', function () {
 
         map.on("mousemove", function (e) {
             var features = map.queryRenderedFeatures(e.point, {
-                layers: ["tracts"]
+                layers: ["NAME_LONG"]
             });
 
             if (features.length) {
-                document.getElementById('tooltip-name').innerHTML = "Tract " + features[0].properties.FEDTRACTNO;
-                document.getElementById('tooltip').innerHTML = Math.round(features[0].properties.TOTPOPCHG);
+                document.getElementById('tooltip-name').innerHTML = "NAME_LONG " + features[0].properties.BioSecurit;
+                document.getElementById('tooltip').innerHTML = Math.round(features[0].properties.BioSafety);
+                
             } else {
                 document.getElementById('tooltip-name').innerHTML = "";
                 document.getElementById('tooltip').innerHTML = "";

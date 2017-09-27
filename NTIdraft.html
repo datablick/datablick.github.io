@@ -46,8 +46,8 @@
 <body>
 <div id='map'></div>
 <div id='sidebar'></div>
-<div id="tooltip-name"></div>
-<div id='tooltip'></div>
+<div id='Country'></div>
+<div id='Metric'></div>
     </div>
 </body>
 
@@ -57,13 +57,24 @@ var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/nti-1747/cj81tmifk95md2rqk4tnez1t6',
     center: [85.250,0.000],
-    zoom: 1,
+    zoom: 2,
     pitch: 0,
     bearing: 0
 });
 
 var nav = new mapboxgl.NavigationControl();
 map.addControl(nav, 'top-right');
-;
+map.on('click', function (e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: ['mapplusscores-73k67t'] });
+    if (!features.length) {
+        return;
+    }
+var feature = features[0];
+var country = feature.properties.NAME;
+var metric = feature.properties.BioSecurit;
+
+document.getElementById("country").innerHTML = country;
+document.getElementById("metric").innerHTML = metric;
+});
 </script>
 </html>

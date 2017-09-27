@@ -55,56 +55,15 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiaHJlY2h0IiwiYSI6IlFwV2hZMlUifQ.dwfwZ5jzPU1xv2mYYVzXlQ';
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/light-v8?fresh=true',
-    center: [-77.014576, 38.899396],
-    zoom: 11,
+    style: 'mapbox://styles/nti-1747/cj81tmifk95md2rqk4tnez1t6?fresh=true?',
+    center: [85.250,0.000],
+    zoom: 1,
     pitch: 0,
     bearing: 0
 });
 
 var nav = new mapboxgl.NavigationControl();
 map.addControl(nav, 'top-right');
-
-map.on('load', function () {
-            map.addSource('nti_map', {
-                type: 'geojson',
-                data: 'https://github.com/datablick/NTI/blob/master/MapPlusScore.geojson'
-            });
-
-            map.addLayer({
-                "id": "NAME_LONG",
-                "type": "fill",
-                "source": "nti_map",
-                "paint": {
-                    "fill-color": {
-                        property: 'BioSecurit',
-                        stops: [
-                    [BREAKS[0], COLORS[0]],
-                    [BREAKS[1], COLORS[1]],
-                    [BREAKS[2], COLORS[2]],
-                    [BREAKS[3], COLORS[3]],
-                    [BREAKS[4], COLORS[4]],
-                    [BREAKS[5], COLORS[5]]]
-                    },
-                    "fill-opacity": 0.7,
-                    "fill-outline-color": "#ffffff"
-                }
-            });
-        });
-
-        map.on("mousemove", function (e) {
-            var features = map.queryRenderedFeatures(e.point, {
-                layers: ["NAME_LONG"]
-            });
-
-            if (features.length) {
-                document.getElementById('tooltip-name').innerHTML = "NAME_LONG " + features[0].properties.BioSecurit;
-                document.getElementById('tooltip').innerHTML = Math.round(features[0].properties.BioSafety);
-                
-            } else {
-                document.getElementById('tooltip-name').innerHTML = "";
-                document.getElementById('tooltip').innerHTML = "";
-            }
-        });
+};
 </script>
 </html>

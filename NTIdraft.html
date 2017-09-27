@@ -4,12 +4,16 @@
     <meta charset='utf-8' />
     <title>NTI Biosecurity</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+<!--Scripts-->
+
 <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.32.1/mapbox-gl.js'></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="https://d3js.org/d3.v3.min.js"></script>
+
+<!--CSS-->
+
 <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.32.1/mapbox-gl.css' rel='stylesheet' />
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
         margin: 0;
@@ -42,91 +46,64 @@
 <body>
 <div id='map'></div>
 <div id='sidebar'></div>
+<div id="tooltip-name"></div>
+<div id='tooltip'></div>
+    </div>
 </body>
 
 <script>
-mapboxgl.accessToken = 'pk.eyJ1IjoiYWxsYW53YWxrZXJpdCIsImEiOiJZT3NlYnRFIn0.8-oyZEa83PvOolKOStdCbg';
+mapboxgl.accessToken = 'pk.eyJ1IjoiaHJlY2h0IiwiYSI6IlFwV2hZMlUifQ.dwfwZ5jzPU1xv2mYYVzXlQ';
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/allanwalkerit/cj788k1js714b2smvrv3s6dlj?fresh=true',
-    center: [0,18],
-    zoom: 1.5,
-    pitch: 40,
+    style: 'mapbox://styles/mapbox/light-v8?fresh=true',
+    center: [-77.014576, 38.899396],
+    zoom: 11,
+    pitch: 0,
     bearing: 0
 });
 
 var nav = new mapboxgl.NavigationControl();
 map.addControl(nav, 'top-left');
-map.on('click', function (e) {
-    var features = map.queryRenderedFeatures(e.point, { layers: ['data-aey09o'] });
-    if (!features.length) {
-        return;
-    }
-var feature = features[0];
-var featuredata = feature.properties.JSON;
-var country = feature.properties.Country;
-var popup = new mapboxgl.Popup()
-        .setLngLat(map.unproject(e.point))
-        .setHTML(country+' GDP:'+'<br><br>'+'<svg width="200" height="200"></svg>')
-        .addTo(map);
-var input = JSON.parse(featuredata);
 
-var margin = {top: 10, right: 10, bottom: 20, left: 30},
-    width = 200 - margin.left - margin.right,
-    height = 200 - margin.top - margin.bottom;
+map.on('load', function () {
+            map.addSource('dc', {
+                type: 'geojson',
+                data: 'https://gist.githubusercontent.com/hrecht/82b6440ed3b982a6f594/raw/48832482382f81d1f6943896626e21b80da6b45c/data.geojson'
+            });
 
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
+            map.addLayer({
+                "id": "tracts",
+                "type": "fill",
+                "source": "dc",
+                "paint": {
+                    "fill-color": {
+                        property: 'TOTPOPCHG',
+                        stops: [
+                    [BREAKS[0], COLORS[0]],
+                    [BREAKS[1], COLORS[1]],
+                    [BREAKS[2], COLORS[2]],
+                    [BREAKS[3], COLORS[3]],
+                    [BREAKS[4], COLORS[4]],
+                    [BREAKS[5], COLORS[5]]]
+                    },
+                    "fill-opacity": 0.7,
+                    "fill-outline-color": "#ffffff"
+                }
+            });
+        });
 
-var y = d3.scale.linear()
-    .range([height, 0]);
+        map.on("mousemove", function (e) {
+            var features = map.queryRenderedFeatures(e.point, {
+                layers: ["tracts"]
+            });
 
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
-
-var svg = d3.select("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var data = [];
-
-for(var i = 0; i< input.length; i++){
-                data.push(input[i])
-}
-
-x.domain(data.map(function(d) { return d.Year; }));
-y.domain([0, d3.max(data, function(d) { return d.Value; })]);
-
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
-
-svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis)
-
-svg.selectAll(".bar")
-    .data(data)
-  .enter().append("rect")
-    .attr("class", "bar")
-    .attr("x", function(d) { return x(d.Year); })
-    .attr("width", x.rangeBand())
-    .attr("y", function(d) { return y(d.Value); })
-    .attr("height", function(d) { return height - y(d.Value); })
-
-function type(d) {
-  d.Value= +d.Value;
-  return d;
-}
-
-});
+            if (features.length) {
+                document.getElementById('tooltip-name').innerHTML = "Tract " + features[0].properties.FEDTRACTNO;
+                document.getElementById('tooltip').innerHTML = Math.round(features[0].properties.TOTPOPCHG);
+            } else {
+                document.getElementById('tooltip-name').innerHTML = "";
+                document.getElementById('tooltip').innerHTML = "";
+            }
+        });
 </script>
 </html>

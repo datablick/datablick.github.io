@@ -30,10 +30,14 @@
       center: [-79.999732, 40.4374],
       zoom: 11
     });
+      
 
- map.on('load', function() {
+var nav = new mapboxgl.NavigationControl();
+map.addControl(nav, 'top-left');
 
-  map.addSource('trees', {
+map.on('load', function() {
+
+    map.addSource('trees', {
     type: 'geojson',
     data: 'trees.geojson'
   });
@@ -89,7 +93,7 @@
   }
 });
      
-  map.addLayer({
+map.addLayer({
   id: 'trees-point',
   type: 'circle',
   source: 'trees',

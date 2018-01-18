@@ -26,7 +26,7 @@
     mapboxgl.accessToken = 'pk.eyJ1IjoiZGF0YWJsaWNrIiwiYSI6IjM5anE0eTQifQ.XfwI7Wcu7EFKoKiTQldy5Q';
     var map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/datablick/cj0pwvla6006b2smy1q19t44x',  
+      style: 'mapbox://styles/datablick/cj0pwvla6006b2smy1q19t44x?fresh=true',  
       center: [-79.999732, 40.4374],
       zoom: 11
     });
@@ -87,7 +87,7 @@
       ]
     },
   }
-}, 'waterway-label');
+}, );
      
   map.addLayer({
   id: 'trees-point',
@@ -128,7 +128,7 @@
       ]
     }
   }
-}, 'waterway-label');   
+}, );   
   
 });
 
